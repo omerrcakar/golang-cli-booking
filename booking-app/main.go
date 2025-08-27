@@ -7,7 +7,8 @@ package main
 import (
 	"booking-app/helper"
 	"fmt" // standart Format package
-	"strings"
+	"strconv"
+	//"strings"
 )
 
 // packace level variable / we can use normal variable level syntax
@@ -18,7 +19,11 @@ var conferenceName = "Go Conference"
 const conferenceTickets int = 50
 
 var remainingTickets uint = 50
-var bookings = []string{}
+
+// var bookings = []string{}
+var bookings = make([]map[string]string, 0) // empty slice of map , 0 initial size it will increase anyways , initials list of maps
+
+// allow multiple key value pairs per user -> map
 
 // go run main.go -> program run
 
@@ -95,8 +100,8 @@ func getFirstName() []string {
 	firstNames := []string{}
 	for _, booking := range bookings {
 		//splits the string with white space as seperator -> return slices
-		var names = strings.Fields(booking)
-		firstNames = append(firstNames, names[0])
+		// var names = strings.Fields(booking)
+		firstNames = append(firstNames, booking["firstName"])
 	}
 	return firstNames
 }
@@ -125,7 +130,15 @@ func getUserInput() (string, string, string, uint) {
 func bookTicket(userTicket uint, firstName string, lastName string, email string) {
 	remainingTickets = remainingTickets - userTicket
 
-	bookings = append(bookings, firstName+" "+lastName)
+	// create a map for user - we can not mix data types
+	var userData = make(map[string]string) //empty map
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["numberOfTickets"] = strconv.FormatUint(uint64(userTicket), 10)
+
+	bookings = append(bookings, userData)
+	fmt.Printf("List of bookings is %v\n", bookings)
 
 	fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v\n", firstName, lastName, userTicket, email)
 	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
